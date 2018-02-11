@@ -15,7 +15,7 @@ Packages used:
 ## Usage
 
 ```bash
-virtualenv -p python3
+virtualenv -p python3 .
 . bin/activate
 pip3 -r requirements.txt
 ```
