@@ -104,7 +104,7 @@ class HSL:
 
 
 @irc3.plugin
-class Plugin:
+class HSLbot:
     """
     Helsinki area public transport route planning IRC bot.
     """
