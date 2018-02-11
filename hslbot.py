@@ -69,9 +69,15 @@ class HSL:
                         endTime
                         from {{
                             name
+                            stop {{
+                                name
+                            }}
                         }},
                         to {{
                             name
+                            stop {{
+                                name
+                            }}
                         }},
                         distance
                     }}
@@ -80,6 +86,7 @@ class HSL:
         }}
         """
 
+        # TODO: handle _get_coords() failing
         from_lon, from_lat = self._get_coords(from_address)
         to_lon, to_lat = self._get_coords(to_address)
 
@@ -161,12 +168,20 @@ class Plugin:
         
         for i, itin in enumerate(itineraries):
             for leg in itin["legs"]:
-                self.bot.notice(mask.nick, "Route #{num} :: {start} depart {mode} from {from_} to {to}, arrive at {end} :: distance {distance}" \
+                if "stop" in leg["from"] and leg["from"]["stop"] is not None:
+                    from_text = leg["from"]["stop"]["name"]
+                else:
+                    from_text = leg["from"]["name"]
+                if "stop" in leg["to"] and leg["to"]["stop"] is not None:
+                    to_text = leg["to"]["stop"]["name"]
+                else:
+                    to_text = leg["to"]["name"]
+                self.bot.notice(mask.nick, "Route #{num} :: {mode} at {start} from {from_} to {to} :: arrive at {end} :: distance {distance}" \
                                            .format(start = self._ms_to_time(leg["startTime"]),
                                                    end = self._ms_to_time(leg["endTime"]),
                                                    mode = leg["mode"],
-                                                   from_ = leg["from"]["name"],
-                                                   to = leg["to"]["name"],
+                                                   from_ = from_text,
+                                                   to = to_text,
                                                    distance = self._format_distance(leg["distance"]),
                                                    num = i+1))
             self.bot.notice(mask.nick, "Route #{num} :: Total distance {dist}, total duration {dur}" \
