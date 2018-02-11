@@ -17,7 +17,7 @@ Packages used:
 ```bash
 virtualenv -p python3 .
 . bin/activate
-pip3 -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 At this point you want to edit your `config.ini` to configure the bot's nick, which server to connect to, etc.
