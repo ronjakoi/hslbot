@@ -3,6 +3,10 @@
 HSLbot is an IRC bot for finding public transportation routes in the Helsinki, Finland metropolitan area.
 It uses publicly available JSON and GraphQL APIs.
 
+You can try the bot on IRCnet with the command `/query hslbot !help route`.
+
+You are also welcome to join the `#hslbot` channel.
+
 ## Requirements
 
 IRCbot is only tested on Python 3. It may work on Python 2, but I have no idea.
