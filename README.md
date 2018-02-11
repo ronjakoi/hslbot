@@ -33,3 +33,8 @@ irc3 config.ini
 Querying routes is done with the command `!route`. The bot responds with a NOTICE.
 
 Type `!help route` for the command syntax.
+
+## TODO
+
+* Support for route times other than "depart now".
+* Other options?
