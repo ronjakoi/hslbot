@@ -152,9 +152,9 @@ class HSLbot:
             timestr = "{} min ".format(minutes) + timestr
         if hours > 0:
             timestr = "{} h ".format(hours) + timestr
-        
+
         return timestr
-    
+
     def _format_seconds(self, s):
         return self._format_milliseconds(s * 1000)
 
@@ -188,17 +188,26 @@ class HSLbot:
         for i, itin in enumerate(itineraries):
             for leg in itin["legs"]:
                 if "stop" in leg["from"] and leg["from"]["stop"] is not None:
-                    from_text = leg["from"]["stop"]["name"]
+                    from_text = "{} ({})".format(leg["from"]["stop"]["name"],
+                                                 leg["from"]["stop"]["code"])
                 else:
                     from_text = leg["from"]["name"]
                 if "stop" in leg["to"] and leg["to"]["stop"] is not None:
-                    to_text = leg["to"]["stop"]["name"]
+                    to_text = "{} ({})".format(leg["to"]["stop"]["name"],
+                                               leg["to"]["stop"]["code"])
                 else:
                     to_text = leg["to"]["name"]
-                self.bot.notice(mask.nick, "Route #{num} :: {mode} at {start} from {from_} to {to} :: arrive at {end} :: distance {distance}" \
+
+                if "route" in leg and leg["route"] is not None:
+                    modename = " " + leg["route"]["shortName"]
+                else:
+                    modename = ""
+
+                self.bot.notice(mask.nick, "Route #{num} :: {mode}{modename} at {start} from {from_} to {to} :: arrive at {end} :: distance {distance}" \
                                            .format(start = self._ms_to_time(leg["startTime"]),
                                                    end = self._ms_to_time(leg["endTime"]),
                                                    mode = leg["mode"],
+                                                   modename = modename,
                                                    from_ = from_text,
                                                    to = to_text,
                                                    distance = self._format_distance(leg["distance"]),
