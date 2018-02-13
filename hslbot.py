@@ -17,9 +17,61 @@ class HSL:
     """
     Helsinki area public transport route planning client.
     """
+
     def __init__(self):
         self.route_endpoint = "https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql"
         self.map_endpoint = "https://api.digitransit.fi/geocoding/v1/search"
+
+        # https://github.com/HSLdevcom/digitransit-ui/blob/master/app/configurations/config.hsl.js#L121
+        self.AREA_POLYGON = [
+            [25.5345, 60.2592],
+            [25.3881, 60.1693],
+            [25.3559, 60.103],
+            [25.3293, 59.9371],
+            [24.2831, 59.78402],
+            [24.2721, 59.95501],
+            [24.2899, 60.00895],
+            [24.3087, 60.01947],
+            [24.1994, 60.12753],
+            [24.1362, 60.1114],
+            [24.1305, 60.12847],
+            [24.099, 60.1405],
+            [24.0179, 60.1512],
+            [24.0049, 60.1901],
+            [24.0445, 60.1918],
+            [24.0373, 60.2036],
+            [24.0796, 60.2298],
+            [24.1652, 60.2428],
+            [24.3095, 60.2965],
+            [24.3455, 60.2488],
+            [24.428, 60.3002],
+            [24.5015, 60.2872],
+            [24.4888, 60.3306],
+            [24.5625, 60.3142],
+            [24.5957, 60.3242],
+            [24.6264, 60.3597],
+            [24.666, 60.3638],
+            [24.7436, 60.3441],
+            [24.9291, 60.4523],
+            [24.974, 60.5253],
+            [24.9355, 60.5131],
+            [24.8971, 60.562],
+            [25.0388, 60.5806],
+            [25.1508, 60.5167],
+            [25.1312, 60.4938],
+            [25.0385, 60.512],
+            [25.057, 60.4897],
+            [25.0612, 60.4485],
+            [25.1221, 60.4474],
+            [25.1188, 60.4583],
+            [25.149, 60.4621],
+            [25.1693, 60.5062],
+            [25.2242, 60.5016],
+            [25.3661, 60.4118],
+            [25.3652, 60.3756],
+            [25.5345, 60.2592]
+        ]
+
 
     def _get_coords(self, address):
         """
@@ -30,7 +82,10 @@ class HSL:
         """
         if len(address) == 0:
             raise self.BadAddress("Argument 'address' is empty")
-        params = {'text': address, 'size': 1}
+
+        poly = ",".join(str(x) for x in [" ".join([str(y[0]),str(y[1])]) for y in self.AREA_POLYGON])
+
+        params = {'text': address, 'size': 1, 'boundary.polygon': poly}
         response = requests.get(self.map_endpoint, params=params)
         tree = objectpath.Tree(response.json())
         try:
@@ -114,7 +169,6 @@ class HSL:
 
     class BadAddress(Exception):
         pass
-
 
 @irc3.plugin
 class HSLbot:
