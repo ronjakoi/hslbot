@@ -183,7 +183,8 @@ class HSLbot:
         if len(itineraries) == 0:
             self.bot.notice(mask.nick, "No routes found :(")
             return
-        
+
+        totaldistance = 0
         for i, itin in enumerate(itineraries):
             for leg in itin["legs"]:
                 if "stop" in leg["from"] and leg["from"]["stop"] is not None:
@@ -202,7 +203,11 @@ class HSLbot:
                                                    to = to_text,
                                                    distance = self._format_distance(leg["distance"]),
                                                    num = i+1))
+
+                totaldistance += leg["distance"]
+
             self.bot.notice(mask.nick, "Route #{num} :: Total distance {dist}, total duration {dur}" \
-                                           .format(num = i+1,
-                                                   dist = self._format_distance(itin["walkDistance"]),
-                                                   dur = self._format_seconds(itin["duration"])))
+                            .format(num = i+1,
+                                    dist = self._format_distance(totaldistance),
+                                    dur = self._format_seconds(itin["duration"])))
+
