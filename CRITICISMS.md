@@ -45,5 +45,5 @@ Käytettävyyttä lisäisi huomattavasti jos tuo kertoisi pelkän "BUS" sijaan m
 
 ### Resolution
 
-Fixed in #2.
+Fixed in [#2](https://github.com/ronjakoi/hslbot/issues/2).
 
