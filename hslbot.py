@@ -29,7 +29,7 @@ class HSL:
         Returns None when no coordinates found.
         """
         if len(address) == 0:
-            raise RuntimeError("Argument 'address' is empty")
+            raise self.BadAddress("Argument 'address' is empty")
         params = {'text': address, 'size': 1}
         response = requests.get(self.map_endpoint, params=params)
         tree = objectpath.Tree(response.json())
@@ -71,24 +71,34 @@ class HSL:
                             name
                             stop {{
                                 name
+                                code
                             }}
                         }},
                         to {{
                             name
                             stop {{
                                 name
+                                code
                             }}
                         }},
                         distance
+                        route {{
+                            shortName
+                        }}
                     }}
                 }}
             }}
         }}
         """
 
-        # TODO: handle _get_coords() failing
-        from_lon, from_lat = self._get_coords(from_address)
-        to_lon, to_lat = self._get_coords(to_address)
+        try:
+            from_lon, from_lat = self._get_coords(from_address)
+        except ValueError as e:
+            raise self.BadAddress("No coordinates found for '%s'" % from_address)
+        try:
+            to_lon, to_lat = self._get_coords(to_address)
+        except ValueError as e:
+            raise self.BadAddress("No coordinates found for '%s'" % to_address)
 
         query_populated = query_text.format(from_address = from_address,
                                         to_address   = to_address,
@@ -101,6 +111,9 @@ class HSL:
 
         r = requests.post(self.route_endpoint, json=graphql_payload)
         return r.json()
+
+    class BadAddress(Exception):
+        pass
 
 
 @irc3.plugin
@@ -160,7 +173,12 @@ class HSLbot:
         """
         # TODO: support for departure and arrival time
 
-        r = self.HSL.get_route(args['<from_address>'], args['<to_address>'])
+        try:
+            r = self.HSL.get_route(args['<from_address>'], args['<to_address>'])
+        except self.HSL.BadAddress as e:
+            self.bot.notice(mask.nick, e)
+            return
+
         itineraries = objectpath.Tree(r).execute("$.data.plan.itineraries")
         if len(itineraries) == 0:
             self.bot.notice(mask.nick, "No routes found :(")
