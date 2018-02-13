@@ -176,7 +176,7 @@ class HSLbot:
         try:
             r = self.HSL.get_route(args['<from_address>'], args['<to_address>'])
         except self.HSL.BadAddress as e:
-            self.bot.notice(mask.nick, e)
+            self.bot.notice(mask.nick, str(e))
             return
 
         itineraries = objectpath.Tree(r).execute("$.data.plan.itineraries")
